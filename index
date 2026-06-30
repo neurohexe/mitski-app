@@ -11,736 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f0f2f5;
-            color: #1a1a2e;
-            min-height: 100vh;
-        }
-        
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #e8eaed; border-radius: 8px; }
-        ::-webkit-scrollbar-thumb { background: #c1c7cd; border-radius: 8px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8afb6; }
-        
-        /* ===== HEADER / NAVBAR ===== */
-        .navbar {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        
-        .navbar .logo i {
-            font-size: 28px;
-            color: #4fc3f7;
-        }
-        
-        .navbar .logo span {
-            background: linear-gradient(90deg, #4fc3f7, #81c784);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .nav-links button {
-            background: rgba(255,255,255,0.08);
-            border: none;
-            color: #b0bec5;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-        }
-        
-        .nav-links button:hover {
-            background: rgba(255,255,255,0.16);
-            color: #fff;
-        }
-        
-        .nav-links button.active {
-            background: #4fc3f7;
-            color: #1a1a2e;
-        }
-        
-        .nav-links button i {
-            font-size: 16px;
-        }
-        
-        /* ===== AUTH BUTTON ===== */
-        .auth-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .auth-section .user-status {
-            color: #b0bec5;
-            font-size: 13px;
-        }
-        
-        .auth-section .user-status i {
-            color: #81c784;
-            margin-right: 4px;
-        }
-        
-        .btn-auth {
-            background: #4fc3f7;
-            border: none;
-            color: #1a1a2e;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-        
-        .btn-auth:hover {
-            background: #81d4fa;
-            transform: scale(1.03);
-        }
-        
-        .btn-auth.logout {
-            background: #ef5350;
-            color: #fff;
-        }
-        
-        .btn-auth.logout:hover {
-            background: #e53935;
-        }
-        
-        /* ===== MAIN CONTAINER ===== */
-        .main-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 24px 32px 40px;
-        }
-        
-        /* ===== TAB CONTENT ===== */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* ===== PAGE HEADER ===== */
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .page-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-        
-        .page-header h1 i {
-            color: #4fc3f7;
-            margin-right: 10px;
-        }
-        
-        .page-header .subtitle {
-            color: #6b7a8f;
-            font-size: 14px;
-            font-weight: 400;
-        }
-        
-        .page-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-            border: none;
-            color: #1a1a2e;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #e8eaed;
-            border: none;
-            color: #3c4043;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-        }
-        
-        .btn-secondary:hover {
-            background: #d2d5d9;
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #81c784, #66bb6a);
-            border: none;
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 187, 106, 0.4);
-        }
-        
-        .btn-danger {
-            background: #ef5350;
-            border: none;
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-        }
-        
-        .btn-danger:hover {
-            background: #e53935;
-        }
-        
-        /* ===== STATS CARDS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-        
-        .stat-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 18px 22px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 1px solid #e8eaed;
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        }
-        
-        .stat-card .stat-label {
-            font-size: 13px;
-            color: #6b7a8f;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .stat-card .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-top: 4px;
-        }
-        
-        .stat-card .stat-icon {
-            float: right;
-            font-size: 28px;
-            opacity: 0.3;
-        }
-        
-        /* ===== TABLE ===== */
-        .table-container {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 1px solid #e8eaed;
-            overflow: hidden;
-        }
-        
-        .table-toolbar {
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            border-bottom: 1px solid #e8eaed;
-            background: #fafbfc;
-        }
-        
-        .table-toolbar .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #fff;
-            border: 1px solid #d2d5d9;
-            border-radius: 8px;
-            padding: 6px 14px;
-            flex: 1;
-            min-width: 200px;
-            max-width: 400px;
-        }
-        
-        .table-toolbar .search-box i {
-            color: #6b7a8f;
-            font-size: 14px;
-        }
-        
-        .table-toolbar .search-box input {
-            border: none;
-            outline: none;
-            padding: 6px 0;
-            font-size: 14px;
-            width: 100%;
-            font-family: inherit;
-            background: transparent;
-        }
-        
-        .table-toolbar .filter-select {
-            padding: 8px 14px;
-            border: 1px solid #d2d5d9;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: inherit;
-            background: #fff;
-            color: #1a1a2e;
-            cursor: pointer;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            padding: 0 4px 4px 4px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        
-        table thead {
-            background: #f8f9fa;
-        }
-        
-        table thead th {
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #3c4043;
-            border-bottom: 2px solid #e8eaed;
-            white-space: nowrap;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        
-        table tbody td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f0f2f5;
-            color: #1a1a2e;
-            vertical-align: middle;
-        }
-        
-        table tbody tr:hover {
-            background: #f8f9fa;
-        }
-        
-        table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-badge.active {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .status-badge.inactive {
-            background: #fce4ec;
-            color: #c62828;
-        }
-        
-        .status-badge.low {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        
-        .status-badge.medium {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        
-        .status-badge.high {
-            background: #e8f5e9;
-            color: #1b5e20;
-        }
-        
-        .action-btn {
-            background: none;
-            border: none;
-            padding: 4px 8px;
-            cursor: pointer;
-            color: #6b7a8f;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-        
-        .action-btn:hover {
-            background: #e8eaed;
-            color: #1a1a2e;
-        }
-        
-        .action-btn.edit:hover {
-            color: #1976d2;
-        }
-        
-        .action-btn.delete:hover {
-            color: #d32f2f;
-        }
-        
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal {
-            background: #fff;
-            border-radius: 18px;
-            max-width: 580px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
-            animation: modalSlideIn 0.3s ease;
-        }
-        
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
-        .modal-header {
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid #e8eaed;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .modal-header h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-        
-        .modal-header h2 i {
-            color: #4fc3f7;
-            margin-right: 8px;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6b7a8f;
-            transition: all 0.2s ease;
-            padding: 0 4px;
-        }
-        
-        .modal-close:hover {
-            color: #1a1a2e;
-            transform: rotate(90deg);
-        }
-        
-        .modal-body {
-            padding: 24px;
-        }
-        
-        .modal-body .form-group {
-            margin-bottom: 18px;
-        }
-        
-        .modal-body .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 13px;
-            color: #3c4043;
-            margin-bottom: 5px;
-        }
-        
-        .modal-body .form-group label .required {
-            color: #ef5350;
-        }
-        
-        .modal-body .form-group input,
-        .modal-body .form-group select,
-        .modal-body .form-group textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #d2d5d9;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s ease;
-            background: #fafbfc;
-        }
-        
-        .modal-body .form-group input:focus,
-        .modal-body .form-group select:focus,
-        .modal-body .form-group textarea:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15);
-            background: #fff;
-        }
-        
-        .modal-body .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-        
-        .modal-body .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        
-        .modal-footer {
-            padding: 16px 24px 24px;
-            border-top: 1px solid #e8eaed;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
-        /* ===== LOADING ===== */
-        .loading-spinner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            color: #6b7a8f;
-            font-size: 16px;
-            gap: 12px;
-        }
-        
-        .loading-spinner i {
-            font-size: 32px;
-            color: #4fc3f7;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7a8f;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            opacity: 0.3;
-            margin-bottom: 12px;
-        }
-        
-        .empty-state h3 {
-            font-size: 18px;
-            color: #3c4043;
-            margin-bottom: 6px;
-        }
-        
-        /* ===== TOAST ===== */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .toast {
-            padding: 14px 22px;
-            border-radius: 12px;
-            color: #fff;
-            font-weight: 500;
-            font-size: 14px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.2);
-            animation: slideUp 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 280px;
-        }
-        
-        .toast.success { background: #43a047; }
-        .toast.error { background: #e53935; }
-        .toast.info { background: #1e88e5; }
-        .toast.warning { background: #fb8c00; }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 12px 16px;
-            }
-            .navbar .logo {
-                font-size: 18px;
-            }
-            .nav-links button {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-            .main-container {
-                padding: 16px;
-            }
-            .page-header h1 {
-                font-size: 22px;
-            }
-            .modal-body .form-row {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .table-toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .table-toolbar .search-box {
-                max-width: 100%;
-            }
-            .modal {
-                max-width: 100%;
-                margin: 10px;
-            }
-            .auth-section .user-status {
-                font-size: 12px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .navbar .logo span {
-                font-size: 16px;
-            }
-        }
+        /* ... весь ваш CSS ... */
+        /* (оставьте как есть, он уже у вас есть) */
     </style>
 </head>
 <body>
@@ -782,235 +54,481 @@
 
 <!-- ===== MAIN ===== -->
 <div class="main-container">
+    <!-- ... весь ваш HTML ... -->
+    <!-- (оставьте как есть) -->
+</div>
 
-    <!-- ===== DASHBOARD TAB ===== -->
-    <div class="tab-content active" id="tab-dashboard">
-        <div class="page-header">
-            <div>
-                <h1><i class="fas fa-chart-pie"></i> Панель управления</h1>
-                <span class="subtitle">Общая статистика склада</span>
-            </div>
-            <div class="page-actions">
-                <button class="btn-primary" onclick="refreshData()">
-                    <i class="fas fa-sync-alt"></i> Обновить
-                </button>
-            </div>
-        </div>
+<!-- ============================================ -->
+<!-- ===== ПОДКЛЮЧЕНИЕ К GOOGLE SHEETS API ===== -->
+<!-- ============================================ -->
+
+<script>
+// ============================================
+// КОНФИГУРАЦИЯ
+// ============================================
+
+// ⚠️ ВСТАВЬТЕ СВОЙ CLIENT ID СЮДА:
+const CLIENT_ID = '309525177557-l6vvajhjpt48r7b59qeo2pr0eotdou5h.apps.googleusercontent.com';
+
+// ⚠️ ВСТАВЬТЕ ID ВАШЕЙ ТАБЛИЦЫ:
+// Откройте таблицу → скопируйте ID из URL
+const SPREADSHEET_ID = '1XIe7P0sZk_HTu2OJtp3pPymBI--S7OKKltbPJn1ldk';
+
+// Настройки API
+const API_KEY = ''; // пока оставляем пустым (для OAuth не нужен)
+const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+let isAuthenticated = false;
+
+// ============================================
+// ЗАГРУЗКА БИБЛИОТЕК GOOGLE
+// ============================================
+
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+    await gapi.client.init({
+        apiKey: API_KEY,
+        discoveryDocs: [DISCOVERY_DOC],
+    });
+    gapiInited = true;
+    maybeEnableButtons();
+}
+
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: '', // будет определено позже
+    });
+    gisInited = true;
+    maybeEnableButtons();
+}
+
+function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+        // Кнопки готовы к работе
+        console.log('✅ Google API готов к работе');
+    }
+}
+
+// ============================================
+// АВТОРИЗАЦИЯ
+// ============================================
+
+function handleAuth() {
+    const authBtn = document.getElementById('authBtn');
+    
+    if (isAuthenticated) {
+        // Выход
+        handleSignoutClick();
+        return;
+    }
+    
+    // Вход
+    tokenClient.callback = async (resp) => {
+        if (resp.error !== undefined) {
+            showToast('Ошибка авторизации: ' + resp.error, 'error');
+            throw resp;
+        }
+        isAuthenticated = true;
+        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Авторизован';
+        document.getElementById('userStatus').className = 'user-status authenticated';
+        authBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Выйти';
+        authBtn.className = 'btn-auth logout';
         
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <span class="stat-icon"><i class="fas fa-boxes"></i></span>
-                <div class="stat-label">Всего товаров</div>
-                <div class="stat-value" id="statTotal">—</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
-                <div class="stat-label">Активных</div>
-                <div class="stat-value" id="statActive">—</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-icon"><i class="fas fa-exclamation-triangle"></i></span>
-                <div class="stat-label">Низкий остаток</div>
-                <div class="stat-value" id="statLow">—</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-icon"><i class="fas fa-shopping-cart"></i></span>
-                <div class="stat-label">Заказов сегодня</div>
-                <div class="stat-value" id="statOrders">—</div>
-            </div>
-        </div>
+        showToast('✅ Авторизация выполнена успешно!', 'success');
+        await loadAllData();
+    };
+
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+        tokenClient.requestAccessToken({ prompt: '' });
+    }
+}
+
+function handleSignoutClick() {
+    const token = gapi.client.getToken();
+    if (token !== null) {
+        google.accounts.oauth2.revoke(token.access_token);
+        gapi.client.setToken('');
+        isAuthenticated = false;
+        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Не авторизован';
+        document.getElementById('userStatus').className = 'user-status unauthenticated';
+        document.getElementById('authBtn').innerHTML = '<i class="fas fa-google"></i> Войти';
+        document.getElementById('authBtn').className = 'btn-auth';
+        showToast('🔓 Вы вышли из системы', 'info');
+    }
+}
+
+// ============================================
+// РАБОТА С GOOGLE SHEETS
+// ============================================
+
+async function readSheet(range) {
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return null;
+    }
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: range,
+        });
+        return response.result.values || [];
+    } catch (err) {
+        console.error('Ошибка чтения:', err);
+        showToast('Ошибка чтения данных: ' + err.message, 'error');
+        return null;
+    }
+}
+
+async function writeSheet(range, values) {
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return null;
+    }
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: range,
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: values },
+        });
+        showToast('✅ Данные сохранены!', 'success');
+        return response;
+    } catch (err) {
+        console.error('Ошибка записи:', err);
+        showToast('Ошибка записи: ' + err.message, 'error');
+        return null;
+    }
+}
+
+async function appendRow(range, rowData) {
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return null;
+    }
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.append({
+            spreadsheetId: SPREADSHEET_ID,
+            range: range,
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: [rowData] },
+        });
+        showToast('✅ Строка добавлена!', 'success');
+        return response;
+    } catch (err) {
+        console.error('Ошибка добавления:', err);
+        showToast('Ошибка добавления: ' + err.message, 'error');
+        return null;
+    }
+}
+
+// ============================================
+// ЗАГРУЗКА ДАННЫХ
+// ============================================
+
+async function loadAllData() {
+    await loadProducts();
+    await loadStats();
+}
+
+async function loadProducts() {
+    const data = await readSheet('Склад_Продукты!A2:E');
+    const tbody = document.getElementById('productsTableBody');
+    const dashboardTbody = document.getElementById('dashboardTableBody');
+    
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-box"></i><h3>Нет товаров</h3></div></td></tr>';
+        dashboardTbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-box"></i><h3>Нет товаров</h3></div></td></tr>';
+        return;
+    }
+    
+    let productsHtml = '';
+    let dashboardHtml = '';
+    
+    data.forEach(row => {
+        const name = row[0] || '—';
+        const qty = row[1] || '0';
+        const unit = row[2] || 'шт';
+        const category = row[3] || 'Без категории';
+        const active = row[4] === 'true' || row[4] === true;
         
-        <div class="table-container">
-            <div class="table-toolbar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Поиск товаров..." id="dashboardSearch" oninput="filterDashboard()" />
-                </div>
-                <select class="filter-select" id="dashboardFilter" onchange="filterDashboard()">
-                    <option value="all">Все категории</option>
-                    <option value="Продукты">Продукты</option>
-                    <option value="Хозтовары">Хозтовары</option>
-                    <option value="Канцелярия">Канцелярия</option>
-                    <option value="Медикаменты">Медикаменты</option>
-                </select>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Количество</th>
-                            <th>Ед. изм.</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dashboardTableBody">
-                        <tr><td colspan="5"><div class="loading-spinner"><i class="fas fa-spinner"></i> Загрузка...</div></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== PRODUCTS TAB ===== -->
-    <div class="tab-content" id="tab-products">
-        <div class="page-header">
-            <div>
-                <h1><i class="fas fa-boxes"></i> Управление товарами</h1>
-                <span class="subtitle">Добавление, редактирование и удаление товаров</span>
-            </div>
-            <div class="page-actions">
-                <button class="btn-success" onclick="openAddProductModal()">
-                    <i class="fas fa-plus"></i> Добавить товар
-                </button>
-                <button class="btn-secondary" onclick="refreshProducts()">
-                    <i class="fas fa-sync-alt"></i> Обновить
-                </button>
-            </div>
-        </div>
+        // Определяем статус
+        let status = '';
+        let statusClass = '';
+        if (!active) {
+            status = 'Неактивный';
+            statusClass = 'inactive';
+        } else if (parseInt(qty) < 5) {
+            status = 'Низкий остаток';
+            statusClass = 'low';
+        } else if (parseInt(qty) < 20) {
+            status = 'Средний';
+            statusClass = 'medium';
+        } else {
+            status = 'В наличии';
+            statusClass = 'high';
+        }
         
-        <div class="table-container">
-            <div class="table-toolbar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Поиск товаров..." id="productsSearch" oninput="filterProducts()" />
-                </div>
-                <select class="filter-select" id="productsFilter" onchange="filterProducts()">
-                    <option value="all">Все категории</option>
-                    <option value="Продукты">Продукты</option>
-                    <option value="Хозтовары">Хозтовары</option>
-                    <option value="Канцелярия">Канцелярия</option>
-                    <option value="Медикаменты">Медикаменты</option>
-                </select>
-                <select class="filter-select" id="productsStatusFilter" onchange="filterProducts()">
-                    <option value="all">Все статусы</option>
-                    <option value="active">Активные</option>
-                    <option value="inactive">Неактивные</option>
-                </select>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Количество</th>
-                            <th>Ед. изм.</th>
-                            <th>Статус</th>
-                            <th style="text-align:center;">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody">
-                        <tr><td colspan="6"><div class="loading-spinner"><i class="fas fa-spinner"></i> Загрузка...</div></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== ORDERS TAB ===== -->
-    <div class="tab-content" id="tab-orders">
-        <div class="page-header">
-            <div>
-                <h1><i class="fas fa-clipboard-list"></i> Заказы</h1>
-                <span class="subtitle">Управление заказами и поставками</span>
-            </div>
-            <div class="page-actions">
-                <button class="btn-primary" onclick="createOrder()">
-                    <i class="fas fa-plus"></i> Создать заказ
-                </button>
-            </div>
-        </div>
-        <div class="table-container">
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>№ заказа</th>
-                            <th>Дата</th>
-                            <th>Тип</th>
-                            <th>Статус</th>
-                            <th>Позиций</th>
-                            <th style="text-align:center;">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody">
-                        <tr><td colspan="6"><div class="empty-state"><i class="fas fa-clipboard-list"></i><h3>Нет заказов</h3><p>Заказы появятся здесь после создания</p></div></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== REPORTS TAB ===== -->
-    <div class="tab-content" id="tab-reports">
-        <div class="page-header">
-            <div>
-                <h1><i class="fas fa-file-alt"></i> Отчеты</h1>
-                <span class="subtitle">Аналитика и отчеты по складу</span>
-            </div>
-        </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:20px;">
-            <div class="stat-card" style="cursor:pointer;" onclick="generateReport('products')">
-                <div class="stat-label"><i class="fas fa-boxes"></i> Отчет по товарам</div>
-                <div style="margin-top:8px; color:#6b7a8f; font-size:14px;">Полный список всех товаров</div>
-            </div>
-            <div class="stat-card" style="cursor:pointer;" onclick="generateReport('orders')">
-                <div class="stat-label"><i class="fas fa-shopping-cart"></i> Отчет по заказам</div>
-                <div style="margin-top:8px; color:#6b7a8f; font-size:14px;">История заказов и поставок</div>
-            </div>
-            <div class="stat-card" style="cursor:pointer;" onclick="generateReport('stock')">
-                <div class="stat-label"><i class="fas fa-chart-line"></i> Анализ остатков</div>
-                <div style="margin-top:8px; color:#6b7a8f; font-size:14px;">Товары с низким остатком</div>
-            </div>
-            <div class="stat-card" style="cursor:pointer;" onclick="generateReport('categories')">
-                <div class="stat-label"><i class="fas fa-tags"></i> По категориям</div>
-                <div style="margin-top:8px; color:#6b7a8f; font-size:14px;">Распределение товаров по категориям</div>
-            </div>
-        </div>
-        <div id="reportResult" style="margin-top:24px;"></div>
-    </div>
-
-    <!-- ===== SETTINGS TAB ===== -->
-    <div class="tab-content" id="tab-settings">
-        <div class="page-header">
-            <div>
-                <h1><i class="fas fa-cog"></i> Настройки</h1>
-                <span class="subtitle">Подключение к Google Sheets и настройки приложения</span>
-            </div>
-        </div>
+        // Таблица товаров
+        productsHtml += `
+            <tr>
+                <td>${name}</td>
+                <td>${category}</td>
+                <td>${qty}</td>
+                <td>${unit}</td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td style="text-align:center;">
+                    <button class="action-btn edit" onclick="editProduct('${name}')"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="deleteProduct('${name}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
         
-        <div style="background:#fff; border-radius:14px; border:1px solid #e8eaed; padding:24px; max-width:600px;">
-            <div class="form-group">
-                <label>ID Google Таблицы</label>
-                <input type="text" id="sheetIdInput" placeholder="Введите ID таблицы..." style="width:100%; padding:10px 14px; border:1px solid #d2d5d9; border-radius:8px; font-size:14px;" />
-                <div style="margin-top:6px; font-size:12px; color:#6b7a8f;">
-                    ID таблицы можно найти в URL: https://docs.google.com/spreadsheets/d/<b>ID_ТАБЛИЦЫ</b>/edit
-                </div>
-            </div>
-            
-            <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
-                <button class="btn-primary" onclick="saveSheetId()">
-                    <i class="fas fa-save"></i> Сохранить
-                </button>
-                <button class="btn-secondary" onclick="loadSheetId()">
-                    <i class="fas fa-redo"></i> Загрузить
-                </button>
-                <button class="btn-secondary" onclick="testConnection()">
-                    <i class="fas fa-plug"></i> Проверить подключение
-                </button>
-            </div>
-            
-            <div id="connectionStatus" style="margin-top:16px; padding:12px 16px; border-radius:8px; background:#f8f9fa; color:#6b7a8f; font-size:14px;">
-                ⚡ Статус подключения: не проверено
-            </div>
-            
-            <hr style="margin:24px 0; border:none; border-top:1px solid #e8eaed;" />
-            
-            <h3 style="font-size:16px; margin-bottom:12px;">Складские листы</h3>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                    <input type="checkbox" checked /> Склад_Продукты
-                </label>
-                <label style="display:flex; align-items:center; gap:8
+        // Dashboard таблица (без действий)
+        dashboardHtml += `
+            <tr>
+                <td>${name}</td>
+                <td>${category}</td>
+                <td>${qty}</td>
+                <td>${unit}</td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = productsHtml;
+    dashboardTbody.innerHTML = dashboardHtml;
+}
+
+async function loadStats() {
+    const data = await readSheet('Склад_Продукты!A2:E');
+    if (!data) return;
+    
+    let total = 0;
+    let active = 0;
+    let low = 0;
+    
+    data.forEach(row => {
+        const qty = parseInt(row[1]) || 0;
+        const isActive = row[4] === 'true' || row[4] === true;
+        total += qty;
+        if (isActive) active++;
+        if (isActive && qty < 5) low++;
+    });
+    
+    document.getElementById('statTotal').textContent = data.length;
+    document.getElementById('statActive').textContent = active;
+    document.getElementById('statLow').textContent = low;
+    document.getElementById('statOrders').textContent = '—';
+}
+
+// ============================================
+// ФУНКЦИИ ДЛЯ ИНТЕРФЕЙСА
+// ============================================
+
+function refreshData() {
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return;
+    }
+    loadAllData();
+    showToast('🔄 Данные обновлены', 'info');
+}
+
+function refreshProducts() {
+    refreshData();
+}
+
+function openAddProductModal() {
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return;
+    }
+    // Здесь будет модальное окно для добавления товара
+    showToast('🚧 Функция добавления в разработке', 'info');
+}
+
+function editProduct(name) {
+    showToast('✏️ Редактирование: ' + name, 'info');
+}
+
+function deleteProduct(name) {
+    if (confirm(`Удалить товар "${name}"?`)) {
+        showToast('🗑️ Товар удален: ' + name, 'warning');
+    }
+}
+
+function createOrder() {
+    showToast('🚧 Функция создания заказа в разработке', 'info');
+}
+
+function generateReport(type) {
+    const resultDiv = document.getElementById('reportResult');
+    const reportTypes = {
+        products: '📊 Отчет по товарам: Всего ' + document.getElementById('statTotal').textContent + ' позиций',
+        orders: '📊 Отчет по заказам: История заказов',
+        stock: '📊 Анализ остатков: ' + document.getElementById('statLow').textContent + ' товаров с низким остатком',
+        categories: '📊 По категориям: Продукты, Хозтовары, Канцелярия, Медикаменты'
+    };
+    resultDiv.innerHTML = `
+        <div class="stat-card" style="padding:20px;">
+            <h3 style="margin-bottom:8px;">${reportTypes[type] || 'Отчет'}</h3>
+            <p style="color:#6b7a8f;">Отчет сгенерирован в ${new Date().toLocaleTimeString()}</p>
+        </div>
+    `;
+}
+
+function saveSheetId() {
+    const id = document.getElementById('sheetIdInput').value.trim();
+    if (id) {
+        localStorage.setItem('spreadsheetId', id);
+        showToast('✅ ID таблицы сохранен', 'success');
+    } else {
+        showToast('⚠️ Введите ID таблицы', 'warning');
+    }
+}
+
+function loadSheetId() {
+    const id = localStorage.getItem('spreadsheetId');
+    if (id) {
+        document.getElementById('sheetIdInput').value = id;
+        showToast('✅ ID таблицы загружен', 'success');
+    } else {
+        showToast('⚠️ ID таблицы не найден', 'warning');
+    }
+}
+
+function testConnection() {
+    const statusDiv = document.getElementById('connectionStatus');
+    if (isAuthenticated) {
+        statusDiv.innerHTML = '✅ Подключение к Google Sheets установлено!';
+        statusDiv.style.background = '#e8f5e9';
+        statusDiv.style.color = '#2e7d32';
+        showToast('✅ Подключение успешно!', 'success');
+    } else {
+        statusDiv.innerHTML = '❌ Нет авторизации. Нажмите "Войти"';
+        statusDiv.style.background = '#fce4ec';
+        statusDiv.style.color = '#c62828';
+        showToast('⚠️ Сначала авторизуйтесь', 'warning');
+    }
+}
+
+function filterDashboard() {
+    // Фильтрация на dashboard
+    const search = document.getElementById('dashboardSearch').value.toLowerCase();
+    const filter = document.getElementById('dashboardFilter').value;
+    const rows = document.querySelectorAll('#dashboardTableBody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const category = row.querySelector('td:nth-child(2)')?.textContent || '';
+        const show = text.includes(search) && (filter === 'all' || category.includes(filter));
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+function filterProducts() {
+    // Фильтрация на странице товаров
+    const search = document.getElementById('productsSearch').value.toLowerCase();
+    const filter = document.getElementById('productsFilter').value;
+    const statusFilter = document.getElementById('productsStatusFilter').value;
+    const rows = document.querySelectorAll('#productsTableBody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const category = row.querySelector('td:nth-child(2)')?.textContent || '';
+        const status = row.querySelector('td:nth-child(5)')?.textContent || '';
+        const show = text.includes(search) && 
+                    (filter === 'all' || category.includes(filter)) &&
+                    (statusFilter === 'all' || 
+                     (statusFilter === 'active' && !status.includes('Неактивный')) ||
+                     (statusFilter === 'inactive' && status.includes('Неактивный')));
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+// ============================================
+// TOAST / УВЕДОМЛЕНИЯ
+// ============================================
+
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) {
+        // Создаем контейнер если его нет
+        const newContainer = document.createElement('div');
+        newContainer.id = 'toastContainer';
+        newContainer.className = 'toast-container';
+        document.body.appendChild(newContainer);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100px)';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// ============================================
+// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+// ============================================
+
+document.querySelectorAll('.nav-links button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        const tabId = 'tab-' + this.dataset.tab;
+        document.getElementById(tabId).classList.add('active');
+    });
+});
+
+// ============================================
+// ЗАПУСК ПРИЛОЖЕНИЯ
+// ============================================
+
+console.log('🚀 Складской учет загружен');
+console.log('📋 Client ID:', CLIENT_ID);
+console.log('📊 Spreadsheet ID:', SPREADSHEET_ID);
+
+// Проверяем, есть ли сохраненный ID таблицы
+const savedId = localStorage.getItem('spreadsheetId');
+if (savedId) {
+    document.getElementById('sheetIdInput').value = savedId;
+}
+
+// ============================================
+// ПОДКЛЮЧЕНИЕ БИБЛИОТЕК GOOGLE
+// ============================================
+</script>
+
+<!-- Подключение Google API Libraries -->
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+</body>
+</html>
