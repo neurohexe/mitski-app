@@ -3,532 +3,189 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Складской учет - Управление товарами</title>
-    
-    <!-- Google Fonts -->
+    <title>Складской учет</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
     <style>
-        /* ... весь ваш CSS ... */
-        /* (оставьте как есть, он уже у вас есть) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+        .navbar { background: linear-gradient(135deg, #1a1a2e, #0f3460); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .navbar .logo { color: #fff; font-size: 22px; font-weight: 700; }
+        .navbar .logo i { color: #4fc3f7; margin-right: 10px; }
+        .btn-auth { background: #4fc3f7; border: none; color: #1a1a2e; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-auth.logout { background: #ef5350; color: #fff; }
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: #fff; border-radius: 14px; padding: 18px 22px; border: 1px solid #e8eaed; }
+        .stat-card .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-card .stat-label { font-size: 12px; color: #6b7a8f; text-transform: uppercase; }
+        .table-container { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; overflow: hidden; }
+        .table-toolbar { padding: 16px 20px; display: flex; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid #e8eaed; background: #fafbfc; }
+        .table-toolbar .search-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #d2d5d9; border-radius: 8px; padding: 6px 14px; flex: 1; max-width: 400px; }
+        .table-toolbar .search-box input { border: none; outline: none; width: 100%; font-family: inherit; }
+        .table-wrapper { overflow-x: auto; padding: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table thead { background: #f8f9fa; }
+        table thead th { padding: 12px 16px; text-align: left; font-weight: 600; color: #3c4043; border-bottom: 2px solid #e8eaed; font-size: 12px; text-transform: uppercase; }
+        table tbody td { padding: 11px 16px; border-bottom: 1px solid #f0f2f5; }
+        table tbody tr:hover { background: #f8f9fa; }
+        .status-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-badge.active { background: #e8f5e9; color: #2e7d32; }
+        .status-badge.low { background: #fff3e0; color: #e65100; }
+        .status-badge.medium { background: #e3f2fd; color: #0d47a1; }
+        .status-badge.high { background: #e8f5e9; color: #1b5e20; }
+        .status-badge.inactive { background: #fce4ec; color: #c62828; }
+        .loading-spinner { text-align: center; padding: 40px; color: #6b7a8f; }
+        .loading-spinner i { font-size: 32px; animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 500; font-size: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; min-width: 280px; }
+        .toast.success { background: #43a047; }
+        .toast.error { background: #e53935; }
+        .toast.info { background: #1e88e5; }
+        .toast.warning { background: #fb8c00; }
+        .toast-close { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 20px; }
+        .btn-primary { background: linear-gradient(135deg, #4fc3f7, #29b6f6); border: none; color: #1a1a2e; padding: 10px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .btn-secondary { background: #e8eaed; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 500; cursor: pointer; }
+        .user-status { color: #b0bec5; font-size: 13px; }
+        .user-status i { margin-right: 4px; }
+        @media (max-width: 768px) { .navbar { padding: 12px 16px; flex-direction: column; } .main-container { padding: 16px; } }
     </style>
 </head>
 <body>
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
-    <div class="logo">
-        <i class="fas fa-warehouse"></i>
-        <span>Складской учет</span>
-    </div>
-    
-    <div class="nav-links" id="navLinks">
-        <button class="active" data-tab="dashboard">
-            <i class="fas fa-chart-pie"></i> Панель
-        </button>
-        <button data-tab="products">
-            <i class="fas fa-boxes"></i> Товары
-        </button>
-        <button data-tab="orders">
-            <i class="fas fa-clipboard-list"></i> Заказы
-        </button>
-        <button data-tab="reports">
-            <i class="fas fa-file-alt"></i> Отчеты
-        </button>
-        <button data-tab="settings">
-            <i class="fas fa-cog"></i> Настройки
-        </button>
-    </div>
-    
-    <div class="auth-section">
-        <span class="user-status" id="userStatus">
-            <i class="fas fa-circle"></i> Не авторизован
-        </span>
-        <button class="btn-auth" id="authBtn" onclick="handleAuth()">
-            <i class="fas fa-google"></i> Войти
-        </button>
+    <div class="logo"><i class="fas fa-warehouse"></i>Складской учет</div>
+    <div>
+        <span class="user-status" id="userStatus"><i class="fas fa-circle"></i> Не авторизован</span>
+        <button class="btn-auth" id="authBtn" onclick="handleAuth()"><i class="fas fa-google"></i> Войти</button>
     </div>
 </nav>
 
 <!-- ===== MAIN ===== -->
 <div class="main-container">
-    <!-- ... весь ваш HTML ... -->
-    <!-- (оставьте как есть) -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Всего товаров</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Активных</div><div class="stat-value" id="statActive">—</div></div>
+        <div class="stat-card"><div class="stat-label">Низкий остаток</div><div class="stat-value" id="statLow">—</div></div>
+        <div class="stat-card"><div class="stat-label">Заказов сегодня</div><div class="stat-value" id="statOrders">—</div></div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-toolbar">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Поиск товаров..." id="searchInput" oninput="filterTable()" /></div>
+            <button class="btn-primary" onclick="loadData()"><i class="fas fa-sync-alt"></i> Обновить</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Название</th><th>Категория</th><th>Количество</th><th>Ед. изм.</th><th>Статус</th></tr></thead>
+                <tbody id="tableBody"><tr><td colspan="5"><div class="loading-spinner"><i class="fas fa-spinner"></i> Загрузка...</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<!-- ============================================ -->
-<!-- ===== ПОДКЛЮЧЕНИЕ К GOOGLE SHEETS API ===== -->
-<!-- ============================================ -->
+<div id="toastContainer" class="toast-container"></div>
 
 <script>
 // ============================================
-// КОНФИГУРАЦИЯ
+// ⚠️ ВАШИ ДАННЫЕ (ЗАМЕНИТЕ НА СВОИ!)
 // ============================================
-
-// ⚠️ ВСТАВЬТЕ СВОЙ CLIENT ID СЮДА:
-const CLIENT_ID = '309525177557-l6vvajhjpt48r7b59qeo2pr0eotdou5h.apps.googleusercontent.com';
-
-// ⚠️ ВСТАВЬТЕ ID ВАШЕЙ ТАБЛИЦЫ:
-// Откройте таблицу → скопируйте ID из URL
-const SPREADSHEET_ID = '1XIe7P0sZk_HTu2OJtp3pPymBI--S7OKKltbPJn1ldk';
-
-// Настройки API
-const API_KEY = ''; // пока оставляем пустым (для OAuth не нужен)
+const CLIENT_ID = '309525177557-l6vvaijhpt48r7b59qeo2pr0eotdou5h.apps.googleusercontent.com';
+const SPREADSHEET_ID = '1Xle7P0sZk_HTu2O1tp3pPymBI-_S70KKltbPJn1ldks';
+const API_KEY = '';
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
-let isAuthenticated = false;
+let tokenClient, gapiInited = false, gisInited = false, isAuthenticated = false;
 
-// ============================================
-// ЗАГРУЗКА БИБЛИОТЕК GOOGLE
-// ============================================
-
-function gapiLoaded() {
-    gapi.load('client', initializeGapiClient);
-}
-
-async function initializeGapiClient() {
-    await gapi.client.init({
-        apiKey: API_KEY,
-        discoveryDocs: [DISCOVERY_DOC],
-    });
-    gapiInited = true;
-    maybeEnableButtons();
-}
-
-function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: '', // будет определено позже
-    });
-    gisInited = true;
-    maybeEnableButtons();
-}
-
-function maybeEnableButtons() {
-    if (gapiInited && gisInited) {
-        // Кнопки готовы к работе
-        console.log('✅ Google API готов к работе');
-    }
-}
-
-// ============================================
-// АВТОРИЗАЦИЯ
-// ============================================
+function gapiLoaded() { gapi.load('client', async () => { await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] }); gapiInited = true; }); }
+function gisLoaded() { tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' }); gisInited = true; }
 
 function handleAuth() {
-    const authBtn = document.getElementById('authBtn');
-    
-    if (isAuthenticated) {
-        // Выход
-        handleSignoutClick();
-        return;
-    }
-    
-    // Вход
+    const btn = document.getElementById('authBtn');
+    if (isAuthenticated) { handleSignout(); return; }
     tokenClient.callback = async (resp) => {
-        if (resp.error !== undefined) {
-            showToast('Ошибка авторизации: ' + resp.error, 'error');
-            throw resp;
-        }
+        if (resp.error) { showToast('Ошибка: ' + resp.error, 'error'); return; }
         isAuthenticated = true;
-        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Авторизован';
-        document.getElementById('userStatus').className = 'user-status authenticated';
-        authBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Выйти';
-        authBtn.className = 'btn-auth logout';
-        
-        showToast('✅ Авторизация выполнена успешно!', 'success');
-        await loadAllData();
+        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle" style="color:#81c784;"></i> Авторизован';
+        btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Выйти';
+        btn.className = 'btn-auth logout';
+        showToast('✅ Авторизация выполнена!', 'success');
+        await loadData();
     };
-
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-        tokenClient.requestAccessToken({ prompt: '' });
-    }
+    if (gapi.client.getToken() === null) tokenClient.requestAccessToken({ prompt: 'consent' });
+    else tokenClient.requestAccessToken({ prompt: '' });
 }
 
-function handleSignoutClick() {
+function handleSignout() {
     const token = gapi.client.getToken();
-    if (token !== null) {
-        google.accounts.oauth2.revoke(token.access_token);
-        gapi.client.setToken('');
-        isAuthenticated = false;
-        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Не авторизован';
-        document.getElementById('userStatus').className = 'user-status unauthenticated';
-        document.getElementById('authBtn').innerHTML = '<i class="fas fa-google"></i> Войти';
-        document.getElementById('authBtn').className = 'btn-auth';
-        showToast('🔓 Вы вышли из системы', 'info');
-    }
+    if (token) { google.accounts.oauth2.revoke(token.access_token); gapi.client.setToken(''); }
+    isAuthenticated = false;
+    document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Не авторизован';
+    document.getElementById('authBtn').innerHTML = '<i class="fas fa-google"></i> Войти';
+    document.getElementById('authBtn').className = 'btn-auth';
+    showToast('🔓 Вы вышли', 'info');
 }
 
-// ============================================
-// РАБОТА С GOOGLE SHEETS
-// ============================================
-
-async function readSheet(range) {
-    if (!isAuthenticated) {
-        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
-        return null;
-    }
-    
+async function loadData() {
+    if (!isAuthenticated) { showToast('⚠️ Сначала авторизуйтесь!', 'warning'); return; }
     try {
         const response = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: range,
+            range: 'Склад_Продукты!A2:E'
         });
-        return response.result.values || [];
-    } catch (err) {
-        console.error('Ошибка чтения:', err);
-        showToast('Ошибка чтения данных: ' + err.message, 'error');
-        return null;
-    }
-}
-
-async function writeSheet(range, values) {
-    if (!isAuthenticated) {
-        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
-        return null;
-    }
-    
-    try {
-        const response = await gapi.client.sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
-            range: range,
-            valueInputOption: 'USER_ENTERED',
-            resource: { values: values },
+        const rows = response.result.values || [];
+        if (rows.length === 0) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="5">Нет данных</td></tr>'; return; }
+        
+        let html = '', total = 0, active = 0, low = 0;
+        rows.forEach(row => {
+            const name = row[0] || '—';
+            const qty = parseInt(row[1]) || 0;
+            const unit = row[2] || 'шт';
+            const category = row[3] || '—';
+            const isActive = row[4] === 'true' || row[4] === true;
+            total++; if (isActive) active++; if (isActive && qty < 5) low++;
+            let status = '', cls = '';
+            if (!isActive) { status = 'Неактивный'; cls = 'inactive'; }
+            else if (qty < 5) { status = 'Низкий остаток'; cls = 'low'; }
+            else if (qty < 20) { status = 'Средний'; cls = 'medium'; }
+            else { status = 'В наличии'; cls = 'high'; }
+            html += `<tr><td>${name}</td><td>${category}</td><td>${qty}</td><td>${unit}</td><td><span class="status-badge ${cls}">${status}</span></td></tr>`;
         });
-        showToast('✅ Данные сохранены!', 'success');
-        return response;
-    } catch (err) {
-        console.error('Ошибка записи:', err);
-        showToast('Ошибка записи: ' + err.message, 'error');
-        return null;
+        document.getElementById('tableBody').innerHTML = html;
+        document.getElementById('statTotal').textContent = rows.length;
+        document.getElementById('statActive').textContent = active;
+        document.getElementById('statLow').textContent = low;
+        document.getElementById('statOrders').textContent = '—';
+        showToast('✅ Данные загружены', 'success');
+    } catch (e) {
+        showToast('Ошибка: ' + e.message, 'error');
+        console.error(e);
     }
 }
 
-async function appendRow(range, rowData) {
-    if (!isAuthenticated) {
-        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
-        return null;
-    }
-    
-    try {
-        const response = await gapi.client.sheets.spreadsheets.values.append({
-            spreadsheetId: SPREADSHEET_ID,
-            range: range,
-            valueInputOption: 'USER_ENTERED',
-            resource: { values: [rowData] },
-        });
-        showToast('✅ Строка добавлена!', 'success');
-        return response;
-    } catch (err) {
-        console.error('Ошибка добавления:', err);
-        showToast('Ошибка добавления: ' + err.message, 'error');
-        return null;
-    }
-}
-
-// ============================================
-// ЗАГРУЗКА ДАННЫХ
-// ============================================
-
-async function loadAllData() {
-    await loadProducts();
-    await loadStats();
-}
-
-async function loadProducts() {
-    const data = await readSheet('Склад_Продукты!A2:E');
-    const tbody = document.getElementById('productsTableBody');
-    const dashboardTbody = document.getElementById('dashboardTableBody');
-    
-    if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-box"></i><h3>Нет товаров</h3></div></td></tr>';
-        dashboardTbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-box"></i><h3>Нет товаров</h3></div></td></tr>';
-        return;
-    }
-    
-    let productsHtml = '';
-    let dashboardHtml = '';
-    
-    data.forEach(row => {
-        const name = row[0] || '—';
-        const qty = row[1] || '0';
-        const unit = row[2] || 'шт';
-        const category = row[3] || 'Без категории';
-        const active = row[4] === 'true' || row[4] === true;
-        
-        // Определяем статус
-        let status = '';
-        let statusClass = '';
-        if (!active) {
-            status = 'Неактивный';
-            statusClass = 'inactive';
-        } else if (parseInt(qty) < 5) {
-            status = 'Низкий остаток';
-            statusClass = 'low';
-        } else if (parseInt(qty) < 20) {
-            status = 'Средний';
-            statusClass = 'medium';
-        } else {
-            status = 'В наличии';
-            statusClass = 'high';
-        }
-        
-        // Таблица товаров
-        productsHtml += `
-            <tr>
-                <td>${name}</td>
-                <td>${category}</td>
-                <td>${qty}</td>
-                <td>${unit}</td>
-                <td><span class="status-badge ${statusClass}">${status}</span></td>
-                <td style="text-align:center;">
-                    <button class="action-btn edit" onclick="editProduct('${name}')"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="deleteProduct('${name}')"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-        
-        // Dashboard таблица (без действий)
-        dashboardHtml += `
-            <tr>
-                <td>${name}</td>
-                <td>${category}</td>
-                <td>${qty}</td>
-                <td>${unit}</td>
-                <td><span class="status-badge ${statusClass}">${status}</span></td>
-            </tr>
-        `;
-    });
-    
-    tbody.innerHTML = productsHtml;
-    dashboardTbody.innerHTML = dashboardHtml;
-}
-
-async function loadStats() {
-    const data = await readSheet('Склад_Продукты!A2:E');
-    if (!data) return;
-    
-    let total = 0;
-    let active = 0;
-    let low = 0;
-    
-    data.forEach(row => {
-        const qty = parseInt(row[1]) || 0;
-        const isActive = row[4] === 'true' || row[4] === true;
-        total += qty;
-        if (isActive) active++;
-        if (isActive && qty < 5) low++;
-    });
-    
-    document.getElementById('statTotal').textContent = data.length;
-    document.getElementById('statActive').textContent = active;
-    document.getElementById('statLow').textContent = low;
-    document.getElementById('statOrders').textContent = '—';
-}
-
-// ============================================
-// ФУНКЦИИ ДЛЯ ИНТЕРФЕЙСА
-// ============================================
-
-function refreshData() {
-    if (!isAuthenticated) {
-        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
-        return;
-    }
-    loadAllData();
-    showToast('🔄 Данные обновлены', 'info');
-}
-
-function refreshProducts() {
-    refreshData();
-}
-
-function openAddProductModal() {
-    if (!isAuthenticated) {
-        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
-        return;
-    }
-    // Здесь будет модальное окно для добавления товара
-    showToast('🚧 Функция добавления в разработке', 'info');
-}
-
-function editProduct(name) {
-    showToast('✏️ Редактирование: ' + name, 'info');
-}
-
-function deleteProduct(name) {
-    if (confirm(`Удалить товар "${name}"?`)) {
-        showToast('🗑️ Товар удален: ' + name, 'warning');
-    }
-}
-
-function createOrder() {
-    showToast('🚧 Функция создания заказа в разработке', 'info');
-}
-
-function generateReport(type) {
-    const resultDiv = document.getElementById('reportResult');
-    const reportTypes = {
-        products: '📊 Отчет по товарам: Всего ' + document.getElementById('statTotal').textContent + ' позиций',
-        orders: '📊 Отчет по заказам: История заказов',
-        stock: '📊 Анализ остатков: ' + document.getElementById('statLow').textContent + ' товаров с низким остатком',
-        categories: '📊 По категориям: Продукты, Хозтовары, Канцелярия, Медикаменты'
-    };
-    resultDiv.innerHTML = `
-        <div class="stat-card" style="padding:20px;">
-            <h3 style="margin-bottom:8px;">${reportTypes[type] || 'Отчет'}</h3>
-            <p style="color:#6b7a8f;">Отчет сгенерирован в ${new Date().toLocaleTimeString()}</p>
-        </div>
-    `;
-}
-
-function saveSheetId() {
-    const id = document.getElementById('sheetIdInput').value.trim();
-    if (id) {
-        localStorage.setItem('spreadsheetId', id);
-        showToast('✅ ID таблицы сохранен', 'success');
-    } else {
-        showToast('⚠️ Введите ID таблицы', 'warning');
-    }
-}
-
-function loadSheetId() {
-    const id = localStorage.getItem('spreadsheetId');
-    if (id) {
-        document.getElementById('sheetIdInput').value = id;
-        showToast('✅ ID таблицы загружен', 'success');
-    } else {
-        showToast('⚠️ ID таблицы не найден', 'warning');
-    }
-}
-
-function testConnection() {
-    const statusDiv = document.getElementById('connectionStatus');
-    if (isAuthenticated) {
-        statusDiv.innerHTML = '✅ Подключение к Google Sheets установлено!';
-        statusDiv.style.background = '#e8f5e9';
-        statusDiv.style.color = '#2e7d32';
-        showToast('✅ Подключение успешно!', 'success');
-    } else {
-        statusDiv.innerHTML = '❌ Нет авторизации. Нажмите "Войти"';
-        statusDiv.style.background = '#fce4ec';
-        statusDiv.style.color = '#c62828';
-        showToast('⚠️ Сначала авторизуйтесь', 'warning');
-    }
-}
-
-function filterDashboard() {
-    // Фильтрация на dashboard
-    const search = document.getElementById('dashboardSearch').value.toLowerCase();
-    const filter = document.getElementById('dashboardFilter').value;
-    const rows = document.querySelectorAll('#dashboardTableBody tr');
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const category = row.querySelector('td:nth-child(2)')?.textContent || '';
-        const show = text.includes(search) && (filter === 'all' || category.includes(filter));
-        row.style.display = show ? '' : 'none';
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#tableBody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
 }
 
-function filterProducts() {
-    // Фильтрация на странице товаров
-    const search = document.getElementById('productsSearch').value.toLowerCase();
-    const filter = document.getElementById('productsFilter').value;
-    const statusFilter = document.getElementById('productsStatusFilter').value;
-    const rows = document.querySelectorAll('#productsTableBody tr');
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const category = row.querySelector('td:nth-child(2)')?.textContent || '';
-        const status = row.querySelector('td:nth-child(5)')?.textContent || '';
-        const show = text.includes(search) && 
-                    (filter === 'all' || category.includes(filter)) &&
-                    (statusFilter === 'all' || 
-                     (statusFilter === 'active' && !status.includes('Неактивный')) ||
-                     (statusFilter === 'inactive' && status.includes('Неактивный')));
-        row.style.display = show ? '' : 'none';
-    });
-}
-
-// ============================================
-// TOAST / УВЕДОМЛЕНИЯ
-// ============================================
-
-function showToast(message, type = 'info') {
+function showToast(msg, type = 'info') {
     const container = document.getElementById('toastContainer');
-    if (!container) {
-        // Создаем контейнер если его нет
-        const newContainer = document.createElement('div');
-        newContainer.id = 'toastContainer';
-        newContainer.className = 'toast-container';
-        document.body.appendChild(newContainer);
-    }
-    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : 
-                        type === 'error' ? 'fa-exclamation-circle' : 
-                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
-        <span>${message}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
-    `;
-    
-    document.getElementById('toastContainer').appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentElement) {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(100px)';
-            setTimeout(() => toast.remove(), 300);
-        }
-    }, 5000);
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+    toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg} <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+    container.appendChild(toast);
+    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
 }
 
-// ============================================
-// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-// ============================================
-
-document.querySelectorAll('.nav-links button').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        const tabId = 'tab-' + this.dataset.tab;
-        document.getElementById(tabId).classList.add('active');
-    });
-});
-
-// ============================================
-// ЗАПУСК ПРИЛОЖЕНИЯ
-// ============================================
-
-console.log('🚀 Складской учет загружен');
-console.log('📋 Client ID:', CLIENT_ID);
-console.log('📊 Spreadsheet ID:', SPREADSHEET_ID);
-
-// Проверяем, есть ли сохраненный ID таблицы
-const savedId = localStorage.getItem('spreadsheetId');
-if (savedId) {
-    document.getElementById('sheetIdInput').value = savedId;
-}
-
-// ============================================
-// ПОДКЛЮЧЕНИЕ БИБЛИОТЕК GOOGLE
-// ============================================
+// Загрузка библиотек Google
+document.write('<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"><\/script>');
+document.write('<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"><\/script>');
 </script>
-
-<!-- Подключение Google API Libraries -->
-<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-
 </body>
 </html>
