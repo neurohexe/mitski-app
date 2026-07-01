@@ -98,58 +98,114 @@ const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 let tokenClient, gapiInited = false, gisInited = false, isAuthenticated = false;
 
-function gapiLoaded() { gapi.load('client', async () => { await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] }); gapiInited = true; }); }
-function gisLoaded() { tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' }); gisInited = true; }
+async function gapiLoaded() {
+    console.log('gapi loaded, initializing client...');
+    await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] });
+    console.log('gapi client initialized');
+    gapiInited = true;
+    if (gisInited && isAuthenticated) {
+        loadData();
+    }
+}
+
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: '',
+    });
+    gisInited = true;
+}
 
 function handleAuth() {
     const btn = document.getElementById('authBtn');
-    if (isAuthenticated) { handleSignout(); return; }
+    if (isAuthenticated) {
+        handleSignout();
+        return;
+    }
     tokenClient.callback = async (resp) => {
-        if (resp.error) { showToast('Ошибка: ' + resp.error, 'error'); return; }
+        if (resp.error) {
+            showToast('Ошибка: ' + resp.error, 'error');
+            return;
+        }
         isAuthenticated = true;
-        document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle" style="color:#81c784;"></i> Авторизован';
+        document.getElementById('userStatus').innerHTML =
+            '<i class="fas fa-circle" style="color:#81c784;"></i> Авторизован';
         btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Выйти';
         btn.className = 'btn-auth logout';
         showToast('✅ Авторизация выполнена!', 'success');
-        await loadData();
+        if (gapiInited) {
+            await loadData();
+        }
     };
-    if (gapi.client.getToken() === null) tokenClient.requestAccessToken({ prompt: 'consent' });
-    else tokenClient.requestAccessToken({ prompt: '' });
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+        tokenClient.requestAccessToken({ prompt: '' });
+    }
 }
 
 function handleSignout() {
     const token = gapi.client.getToken();
-    if (token) { google.accounts.oauth2.revoke(token.access_token); gapi.client.setToken(''); }
+    if (token) {
+        google.accounts.oauth2.revoke(token.access_token);
+        gapi.client.setToken('');
+    }
     isAuthenticated = false;
-    document.getElementById('userStatus').innerHTML = '<i class="fas fa-circle"></i> Не авторизован';
+    document.getElementById('userStatus').innerHTML =
+        '<i class="fas fa-circle"></i> Не авторизован';
     document.getElementById('authBtn').innerHTML = '<i class="fas fa-google"></i> Войти';
     document.getElementById('authBtn').className = 'btn-auth';
     showToast('🔓 Вы вышли', 'info');
 }
 
 async function loadData() {
-    if (!isAuthenticated) { showToast('⚠️ Сначала авторизуйтесь!', 'warning'); return; }
+    if (!isAuthenticated) {
+        showToast('⚠️ Сначала авторизуйтесь!', 'warning');
+        return;
+    }
+    console.log('loading data...');
     try {
         const response = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Склад_Продукты!A2:E'
+            range: 'Склад_Продукты!A2:E',
         });
+        console.log('data loaded:', response);
         const rows = response.result.values || [];
-        if (rows.length === 0) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="5">Нет данных</td></tr>'; return; }
-        
-        let html = '', total = 0, active = 0, low = 0;
-        rows.forEach(row => {
+        if (rows.length === 0) {
+            document.getElementById('tableBody').innerHTML =
+                '<tr><td colspan="5">Нет данных</td></tr>';
+            return;
+        }
+
+        let html = '',
+            total = 0,
+            active = 0,
+            low = 0;
+        rows.forEach((row) => {
             const name = row[0] || '—';
             const qty = parseInt(row[1]) || 0;
             const unit = row[2] || 'шт';
             const category = row[3] || '—';
             const isActive = row[4] === 'true' || row[4] === true;
-            total++; if (isActive) active++; if (isActive && qty < 5) low++;
-            let status = '', cls = '';
-            if (!isActive) { status = 'Неактивный'; cls = 'inactive'; }
-            else if (qty < 5) { status = 'Низкий остаток'; cls = 'low'; }
-            else if (qty < 20) { status = 'Средний'; cls = 'medium'; }
-            else { status = 'В наличии'; cls = 'high'; }
+            total++;
+            if (isActive) active++;
+            if (isActive && qty < 5) low++;
+            let status = '',
+                cls = '';
+            if (!isActive) {
+                status = 'Неактивный';
+                cls = 'inactive';
+            } else if (qty < 5) {
+                status = 'Низкий остаток';
+                cls = 'low';
+            } else if (qty < 20) {
+                status = 'Средний';
+                cls = 'medium';
+            } else {
+                status = 'В наличии';
+                cls = 'high';
+            }
             html += `<tr><td>${name}</td><td>${category}</td><td>${qty}</td><td>${unit}</td><td><span class="status-badge ${cls}">${status}</span></td></tr>`;
         });
         document.getElementById('tableBody').innerHTML = html;
@@ -158,15 +214,15 @@ async function loadData() {
         document.getElementById('statLow').textContent = low;
         document.getElementById('statOrders').textContent = '—';
         showToast('✅ Данные загружены', 'success');
-    } catch (e) {
-        showToast('Ошибка: ' + e.message, 'error');
-        console.error(e);
+    } catch (err) {
+        console.error('error loading data:', err);
+        showToast('Ошибка: ' + err.message, 'error');
     }
 }
 
 function filterTable() {
     const q = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('#tableBody tr').forEach(row => {
+    document.querySelectorAll('#tableBody tr').forEach((row) => {
         row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
 }
@@ -175,15 +231,28 @@ function showToast(msg, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
-    toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg} <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle',
+    };
+    toast.innerHTML = `<i class="fas ${
+        icons[type] || icons.info
+    }"></i> ${msg} <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
     container.appendChild(toast);
-    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
+    setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+    }, 5000);
 }
 
 // Загрузка библиотек Google
-document.write('<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"><\/script>');
-document.write('<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"><\/script>');
+document.write(
+    '<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>'
+);
+document.write(
+    '<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>'
+);
 </script>
 </body>
 </html>
